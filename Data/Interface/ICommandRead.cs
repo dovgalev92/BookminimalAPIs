@@ -1,7 +1,7 @@
 namespace BookMinAPIs.Data.Interface
 {
-    public interface ICommandRead<T>
+    public interface ICommandRead<Y>
     {
-        Task<IEnumerable<T>> CommandAllBookRead();
+        Task<IEnumerable<Y>> CommandAllBookRead();
     }
 }

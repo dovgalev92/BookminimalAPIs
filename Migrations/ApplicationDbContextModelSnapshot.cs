@@ -95,13 +95,13 @@ namespace BookMinAPIs.Migrations
 
             modelBuilder.Entity("BookMinAPIs.Models.Entity.Book", b =>
                 {
-                    b.HasOne("BookMinAPIs.Models.Entity.Author", "Author")
+                    b.HasOne("BookMinAPIs.Models.Entity.Author", "Authors")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.Navigation("Authors");
                 });
 
             modelBuilder.Entity("BookMinAPIs.Models.Entity.Review", b =>

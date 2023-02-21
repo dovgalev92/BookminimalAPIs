@@ -1,7 +1,7 @@
 namespace BookMinAPIs.Data.Interface
 {
-    public interface ICommandRead_Id<in TIn, out TOut>
+    public interface ICommandRead_Id<out TOut>
     {
-        TOut CommandReadById(TIn bookId);
+        TOut CommandReadById(int? id);
     }
 }

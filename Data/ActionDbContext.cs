@@ -1,56 +1,77 @@
 using BookMinAPIs.Data.Interface;
 using BookMinAPIs.Models.Entity;
-using AutoMapper;
 using BookMinAPIs.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookMinAPIs.Data
 {
-    public class ActionDbContext : IActionDbContext<CreateBookDtos>, ICommandRead<ReadBooksDtos>, ICommandRead_Id<Book, ReadBookDto_Id>, ICommandUpdate<Book>
+    public class ActionDbContext : IActionDbContext<Book, Author>,ICommandRead_Id<Book>, ICommandRead<Book>
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public ActionDbContext(ApplicationDbContext context, IMapper mapper)
+        public ActionDbContext(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
-        public async Task CommandBookCreate(CreateBookDtos bookCrt)
+        public async Task CommandCreateAuthor(Author author)
         {
-            if(bookCrt == null)
+            if(author == null)
             {
-                throw new ArgumentNullException(nameof(bookCrt), "отсувствуют входные данные");
+                throw new ArgumentNullException(nameof(author));
             }
-            var itemBooks = _mapper.Map<Book>(bookCrt);
-            await _context.AddAsync(itemBooks);
+            _context.Entry(author).State = EntityState.Added;
+            await SaveChangesAsync();
+        }
+        public async Task CommandBookCreate(int id, Book bookCrt)
+        {
+
+            if(bookCrt == null && id == 0)
+            {
+                throw new ArgumentNullException(nameof(bookCrt), "Ошибка. Нет данных");
+            }
+            bookCrt!.Authors = _context.Authors!.Where(x => x.AuthorId == id).FirstOrDefault();
+
+            await _context.AddAsync(bookCrt);
             await SaveChangesAsync();
 
         }
-        public async Task<IEnumerable<ReadBooksDtos>> CommandAllBookRead()
+        public async Task<IEnumerable<Book>> CommandAllBookRead()
         {
-            var listBooks =  await _context.Books!.Include(author => author.Author).AsNoTracking().ToListAsync();
-            var item = _mapper.Map<IEnumerable<ReadBooksDtos>>(listBooks);
-            return item;
+            return await _context.Books!.Include(a => a.Authors).ToListAsync();
         }
 
-        public void CommandDeleteBook(int? bookId)
+        public async Task CommandDeleteBook(int? bookId)
         {
-            throw new NotImplementedException();
+           var book = bookId !=null? _context.Books?.Find(bookId) : throw new  ArgumentNullException(nameof(bookId));
+           _context.Entry(book!).State = EntityState.Deleted;
+           await SaveChangesAsync();
         }
 
-        public ReadBookDto_Id CommandReadById(Book bookId)
+        public Book CommandReadById(int? bookId)
         {
-            throw new NotImplementedException();
+            if(bookId == null)
+            {
+                throw new ArgumentNullException(nameof(bookId));
+            }    
+            var book = _context.Books!.Where(x => x.BookId == bookId).FirstOrDefault();
+
+            return book!;
         }
 
         public Task CommandUpdate(Book bookUpt)
         {
-            throw new NotImplementedException();
+            if(bookUpt == null)
+            {
+                throw new ArgumentNullException(nameof(bookUpt));
+            }
+            _context.Entry(bookUpt).State = EntityState.Modified;
+            return SaveChangesAsync(); 
+
         }
 
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }
+
     }
 }

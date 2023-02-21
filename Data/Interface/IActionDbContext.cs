@@ -1,10 +1,11 @@
 namespace BookMinAPIs.Data.Interface
 {
-    public interface IActionDbContext<in TIn>
+    public interface IActionDbContext<in TIn, T>
     {
-        Task CommandBookCreate(TIn bookCrt);
-        void CommandDeleteBook(int? bookId);
+        Task CommandCreateAuthor(T author);
+        Task CommandBookCreate(int id, TIn bookCrt);
+        Task CommandDeleteBook(int? bookId);
+        Task CommandUpdate(TIn bookUpt);
         Task SaveChangesAsync();
-
     }
 }

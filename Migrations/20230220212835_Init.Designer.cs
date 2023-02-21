@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookMinAPIs.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230219135236_Init")]
+    [Migration("20230220212835_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,13 +97,13 @@ namespace BookMinAPIs.Migrations
 
             modelBuilder.Entity("BookMinAPIs.Models.Entity.Book", b =>
                 {
-                    b.HasOne("BookMinAPIs.Models.Entity.Author", "Author")
+                    b.HasOne("BookMinAPIs.Models.Entity.Author", "Authors")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.Navigation("Authors");
                 });
 
             modelBuilder.Entity("BookMinAPIs.Models.Entity.Review", b =>

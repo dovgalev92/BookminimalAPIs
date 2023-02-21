@@ -15,7 +15,7 @@ namespace BookMinAPIs.Models.Entity
         [Required]
         public decimal Price {get;set;}
         public int AuthorId {get;set;}
-        public Author? Author {get;set;}
+        public Author? Authors {get;set;}
         public ICollection<Review>? Reviews {get;set;}
     
     }
